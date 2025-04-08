@@ -1,0 +1,14 @@
+# pokemon https://pokeapi.co/api/v2/pokemon/{id or name}/ 
+dict_keys(['abilities', 'base_experience', 'cries', 'forms', 'game_indices', 'height', 'held_items', 'id', 'is_default', 'location_area_encounters', 'moves', 'name', 'order', 'past_abilities', 'past_types', 'species', 'sprites', 'stats', 'types', 'weight'])
+
+# Pokemon species https://pokeapi.co/api/v2/pokemon-species/{id or name}/
+dict_keys(['base_happiness', 'capture_rate', 'color', 'egg_groups', 'evolution_chain', 'evolves_from_species', 'flavor_text_entries', 'form_descriptions', 'forms_switchable', 'gender_rate', 'genera', 'generation', 'growth_rate', 'habitat', 'has_gender_differences', 'hatch_counter', 'id', 'is_baby', 'is_legendary', 'is_mythical', 'name', 'names', 'order', 'pal_park_encounters', 'pokedex_numbers', 'shape', 'varieties'])
+
+# ability https://pokeapi.co/api/v2/ability/{id or name}/
+dict_keys(['effect_changes', 'effect_entries', 'flavor_text_entries', 'generation', 'id', 'is_main_series', 'name', 'names', 'pokemon'])
+
+# pokemon forms https://pokeapi.co/api/v2/pokemon-form/{id or name}/
+dict_keys(['form_name', 'form_names', 'form_order', 'id', 'is_battle_only', 'is_default', 'is_mega', 'name', 'names', 'order', 'pokemon', 'sprites', 'types', 'version_group'])
+
+# pokemon type https://pokeapi.co/api/v2/type/{id or name}/
+dict_keys(['damage_relations', 'game_indices', 'generation', 'id', 'move_damage_class', 'moves', 'name', 'names', 'past_damage_relations', 'pokemon', 'sprites'])

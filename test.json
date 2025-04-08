@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Person",
+    "description": "A simple person schema.",
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Full name of the person."
+      },
+      "age": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Age in years."
+      },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "description": "Email address."
+      },
+      "is_student": {
+        "type": "boolean",
+        "description": "Whether the person is a student."
+      }
+    },
+    "required": ["name", "email"]
+  }
+  

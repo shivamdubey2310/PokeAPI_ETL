@@ -9,6 +9,7 @@ import json
 import pandas as pd
 import sqlalchemy as sal
 import helperFunctions.json_explorer as helper
+import time
 
 # Extracting pokemon data
 def extract_pokemon():
@@ -20,25 +21,54 @@ def extract_pokemon():
         initial_response.raise_for_status()
         total_pokemon_count = initial_response.json()["count"]
 
-        pokemon_json_response = []
+        raw_json = []
 
-        for i in range(1, total_pokemon_count // 400):
+        for i in range(1, total_pokemon_count // 200):
             if i == 1:
                 response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{int(i)}")
                 response.raise_for_status()
-                pokemon_json_response.append(response.json()) # response in json format
+                raw_json.append(response.json()) # response in json format
 
-                # Creating schema file for json response
-                file_name = "pokemon_json_schema.md"
-                helper.json_describe_to_md(pokemon_json_response, file_name)
+                # Creating schema file for raw json response
+                file_name = "pokemon_raw_schema.md"
+                helper.json_describe_to_md(response.json(), file_name)
+            else:
+                response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{int(i)}")
+                response.raise_for_status()
+                raw_json.append(response.json()) # response in json format
+            
+            time.sleep(0.5)
+            
+        # Saving raw json 
+        with open("pokemon_raw.json", "w") as file:
+            json.dump(raw_json, file)
+        
+        # selecting only the required fields 
+        dict1 = {}
+        list_of_dict1 = []
 
-            response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{int(i)}")
-            response.raise_for_status()
-            pokemon_json_response.append(response.json()) # response in json format
+        for i in range(0, len(raw_json)):
+            dict1 = {
+                "id": raw_json[i]["id"],
+                "name": raw_json[i]["name"],
+                "base_experience": raw_json[i]["base_experience"],
+                "height": raw_json[i]["height"],
+                "weight": raw_json[i]["weight"],
+                "is_default": raw_json[i]["is_default"],
+                "order": raw_json[i]["order"],
+                "species_name": raw_json[i]["species"]["name"]
+            }
+            list_of_dict1.append(dict1)
 
-            # Saving response in json()
-            # with open("pokemon_data.json", "w") as file:
-            #     json.dump(pokemon_json_response, file)
+        # Saving cleaned json
+        with open("pokemon_cleaned.json", "w") as file:
+            json.dump(list_of_dict1, file)
+
+        # Creating schema file for cleaned json response
+        with open("pokemon_cleaned.json", "r") as file:
+            data = json.load(file)
+            file_name = "pokemon_cleaned_schema.md"
+            helper.json_describe_to_md(data[0], file_name)
 
     except requests.HTTPError as http_err:
         print(f"HTTP error occurred : {http_err}")
@@ -60,13 +90,22 @@ def extract_species():
         species_json_response = []
 
         for i in range(1, total_species_count // 500):
-            response = requests.get(f"https://pokeapi.co/api/v2/pokemon-species/{int(i)}")
-            response.raise_for_status()
-            species_json_response.append(response.json())
+            if i == 1:
+                response = requests.get(f"https://pokeapi.co/api/v2/pokemon-species/{int(i)}")
+                response.raise_for_status()
+                species_json_response.append(response.json())
+                
+                # Creating schema file for json response
+                file_name = "species_json_schema.md"
+                helper.json_describe_to_md(response.json(), file_name)
+            
+            # response = requests.get(f"https://pokeapi.co/api/v2/pokemon-species/{int(i)}")
+            # response.raise_for_status()
+            # species_json_response.append(response.json())
 
             # Saving response in json()
-            with open("species_data.json", "w") as file:
-                json.dump(species_json_response, file)
+            # with open("species_data.json", "w") as file:
+            #     json.dump(species_json_response, file)
 
     except requests.HTTPError as http_err:
         print(f"HTTP error occurred : {http_err}")
@@ -88,13 +127,22 @@ def extract_ability():
         ability_json_response = []
         
         for i in range(1, total_species_count // 50):
-            response = requests.get(f"https://pokeapi.co/api/v2/ability/{int(i)}")
-            response.raise_for_status()
-            ability_json_response.append(response.json())
+            if i == 1:
+                response = requests.get(f"https://pokeapi.co/api/v2/ability/{int(i)}")
+                response.raise_for_status()
+                ability_json_response.append(response.json())
+                
+                # Creating schema file for json response
+                file_name = "ability_json_schema.md"
+                helper.json_describe_to_md(response.json(), file_name)
+            
+            # response = requests.get(f"https://pokeapi.co/api/v2/ability/{int(i)}")
+            # response.raise_for_status()
+            # ability_json_response.append(response.json())
 
             # Saving response in json()
-            with open("ability_data.json", "w") as file:
-                json.dump(ability_json_response, file)
+            # with open("ability_data.json", "w") as file:
+            #     json.dump(ability_json_response, file)
 
     except requests.HTTPError as http_err:
         print(f"HTTP error occurred : {http_err}")
@@ -116,13 +164,22 @@ def extract_form():
         form_json_response = []
 
         for i in range(1, total_species_count // 500):
-            response = requests.get(f"https://pokeapi.co/api/v2/pokemon-form/{int(i)}")
-            response.raise_for_status()
-            form_json_response.append(response.json())
-
+            if i == 1:
+                response = requests.get(f"https://pokeapi.co/api/v2/pokemon-form/{int(i)}")
+                response.raise_for_status()
+                form_json_response.append(response.json())
+                
+                # Creating schema file for json response
+                file_name = "form_json_schema.md"
+                helper.json_describe_to_md(response.json(), file_name)
+            
+            # response = requests.get(f"https://pokeapi.co/api/v2/pokemon-form/{int(i)}")
+            # response.raise_for_status()
+            # form_json_response.append(response.json())
+            
             # Saving response in json()
-            with open("form_data.json", "w") as file:
-                json.dump(form_json_response, file)
+            # with open("form_data.json", "w") as file:
+            #     json.dump(form_json_response, file)
 
     except requests.HTTPError as http_err:
         print(f"HTTP error occurred : {http_err}")
@@ -143,10 +200,19 @@ def extract_type():
         
         type_json_response = []
 
-        for i in range(1, total_species_count // 50):
-            response = requests.get(f"https://pokeapi.co/api/v2/type/{int(i)}")
-            response.raise_for_status()
-            type_json_response.append(response.json())
+        for i in range(1, total_species_count // 5):
+            if i == 1:
+                response = requests.get(f"https://pokeapi.co/api/v2/type/{int(i)}")
+                response.raise_for_status()
+                type_json_response.append(response.json())
+                
+                # Creating schema file for json response
+                file_name = "type_json_schema.md"
+                helper.json_describe_to_md(response.json(), file_name)
+            
+            # response = requests.get(f"https://pokeapi.co/api/v2/type/{int(i)}")
+            # response.raise_for_status()
+            # type_json_response.append(response.json())
 
             # Saving response in json()
             with open("type.json", "w") as file:
@@ -165,10 +231,8 @@ def extract_type():
 # Transformation()
 
 def initial_transformation():
-    pokemon_df = pd.read_json("pokemon_data.json")
-    
-    with open("pokemon_data_csv.csv", "w") as file: 
-        pokemon_df.to_csv(file)
+    df = pd.read_json("pokemon_cleaned.json")
+    print(df)
 
 def transform():
     initial_transformation()
@@ -182,5 +246,4 @@ def extraction():
     # extract_type()
 
 extraction()
-# transform()
-
+transform()

@@ -1,5 +1,25 @@
-# Tutorials for this are saved in json_explorer_tutorials.md 
+# 📘 json_explorer Tutorial
 
+This tutorial covers:
+1. **Generating Markdown Summary** (`json_describe_to_md`)
+2. **Creating JSON Schema** (`generate_json_schema`)
+3. **Visualizing JSON as a Tree** (`visualize_json_tree`)
+
+We’ll use Python's built-in libraries and [`rich`](https://github.com/Textualize/rich) for terminal tree visualization.
+
+---
+
+## 🔧 1. Generate Markdown Summary
+
+### 🧠 Purpose:
+Creates a Markdown table describing the JSON structure, useful for documentation or analysis.
+
+### ✅ Use Case:
+Quickly understand nested JSON (e.g., API responses or NoSQL exports).
+
+### 💻 Code:
+
+```python
 def json_describe_to_md(json_data, output_file="output.md"):
     import os
 
@@ -74,9 +94,32 @@ def json_describe_to_md(json_data, output_file="output.md"):
         f.write("\n".join(md_lines))
 
     print(f"✅ Markdown saved as: {output_file}")
+```
 
+### 📂 Example:
 
-# to generate json-schema 
+```python
+json_sample = {
+    "users": [
+        {"id": 1, "profile": {"name": "Alice", "age": 25}},
+        {"id": 2, "profile": {"name": "Bob", "age": 30}}
+    ],
+    "meta": {"count": 2}
+}
+
+json_describe_to_md(json_sample)
+```
+
+---
+
+## 📐 2. Generate JSON Schema
+
+### 🧠 Purpose:
+Infer a simple schema that describes the structure of the JSON. Useful for validation and documentation.
+
+### 💻 Code:
+
+```python
 def generate_json_schema(json_data):
     def infer_type(value):
         if isinstance(value, bool):
@@ -104,9 +147,26 @@ def generate_json_schema(json_data):
         return schema
     else:
         return infer_type(json_data)
+```
 
+### 📂 Example:
 
-# Tree using rich.tree
+```python
+import json
+schema = generate_json_schema(json_sample)
+print(json.dumps(schema, indent=2))
+```
+
+---
+
+## 🌲 3. Visualize JSON Tree (Rich)
+
+### 🧠 Purpose:
+Visualizes nested JSON data as a tree using `rich.tree`. Helpful in CLI exploration.
+
+### 💻 Code:
+
+```python
 from rich.tree import Tree
 from rich.console import Console
 
@@ -131,8 +191,36 @@ def visualize_json_tree(json_data, output_file="json_tree.md"):
     console = Console(record=True)
     console.print(tree)
 
-    # Export to text/markdown file
     with open(output_file, "w", encoding="utf-8") as f:
-        f.write(console.export_text())  # write plain text representation
+        f.write(console.export_text())
 
     print(f"✅ JSON tree saved to {output_file}")
+```
+
+### 📂 Example:
+
+```python
+visualize_json_tree(json_sample)
+```
+
+---
+
+## 🛠️ Requirements
+
+Install the `rich` library for beautiful CLI tree rendering:
+
+```bash
+pip install rich
+```
+
+---
+
+## 📌 Summary
+
+| Function Name            | Output                | Use Case                                 |
+|--------------------------|------------------------|-------------------------------------------|
+| `json_describe_to_md`    | `output.md` (table)    | Document JSON structure in Markdown       |
+| `generate_json_schema`   | Schema (dictionary)    | Generate validation-compatible schema     |
+| `visualize_json_tree`    | CLI + `json_tree.md`   | View nested JSON visually in terminal     |
+
+---

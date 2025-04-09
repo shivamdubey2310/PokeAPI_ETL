@@ -8,7 +8,7 @@ import requests
 import json
 import pandas as pd
 import sqlalchemy as sal
-from helperFunctions.json_explorer import json_describe 
+import helperFunctions.json_explorer as helper
 
 # Extracting pokemon data
 def extract_pokemon():
@@ -23,11 +23,18 @@ def extract_pokemon():
         pokemon_json_response = []
 
         for i in range(1, total_pokemon_count // 400):
+            if i == 1:
+                response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{int(i)}")
+                response.raise_for_status()
+                pokemon_json_response.append(response.json()) # response in json format
+
+                # Creating schema file for json response
+                file_name = "pokemon_json_schema.md"
+                helper.json_describe_to_md(pokemon_json_response, file_name)
+
             response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{int(i)}")
             response.raise_for_status()
             pokemon_json_response.append(response.json()) # response in json format
-
-            json_describe(response.json())
 
             # Saving response in json()
             # with open("pokemon_data.json", "w") as file:

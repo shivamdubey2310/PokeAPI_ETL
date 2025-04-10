@@ -110,18 +110,6 @@ Here is a **normalized relational database schema** based on the endpoints and c
 
 ---
 
-### **8. `type_damage_relation`**
-**Description:** Type-to-type damage relationships.
-
-| Column Name       | Data Type | Description                     |
-|--------------------|-----------|---------------------------------|
-| `type_id`          | INT (FK)  | References `type(id)`           |
-| `related_type_id`  | INT (FK)  | References `type(id)`           |
-| `relation_type`    | ENUM      | 'double_damage_to', 'half_damage_from', etc. |
-| **PK**: (`type_id`, `related_type_id`, `relation_type`) |
-
----
-
 ## 🔑 Primary & Foreign Key Summary
 
 - **Primary Keys:** `pokemon.id`, `pokemon_species.id`, `ability.id`, `type.id`, `pokemon_form.id`

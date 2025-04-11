@@ -10,6 +10,12 @@ import pandas as pd
 import sqlalchemy as sal
 import helperFunctions.json_explorer as helper
 import time
+import os
+
+# To import all .env variables
+from dotenv import load_dotenv
+load_dotenv()
+
 
 def extraction_1(endpoint):
     file_name = endpoint.replace("-", "_")  # filename for schema files
@@ -423,7 +429,224 @@ def detecting_missing_values():
     for name in file_names:
         count_missing_values(name)
 
+# -------------------------------------------------------------------------------------------
+def creating_database(db_name): 
+    # Getting Mysql credentials from .env
+    MySQL_User = os.getenv("MySQL_User")
+    MySQL_Pass = os.getenv("MySQL_Pass")
+    MySQL_Host = os.getenv("MySQL_Host")
+    print("Connecting to Mysql")
+
+    engine = sal.create_engine(f"mysql+pymysql://{MySQL_User}:{MySQL_Pass}@{MySQL_Host}", echo=True)
+    
+    with engine.connect() as connection:
+        connection.execute(sal.text(f"CREATE DATABASE IF NOT EXISTS {db_name}"))
+        result = connection.execute("SHOW DATABASES")
+        for db in result:
+            if db[0] == db_name:
+                print(f"___Database {db_name} created successfully____")
+            break
+        else:
+            print(f"Error in creating {db_name}")
+
+# ------------------------------------------------------------------------------------------
+
+def creating_tables(db_name):
+    # Getting Mysql credentials from .env
+    MySQL_User = os.getenv("MySQL_User")
+    MySQL_Pass = os.getenv("MySQL_Pass")
+    MySQL_Host = os.getenv("MySQL_Host")
+    print("Connecting to Mysql")
+
+    engine = sal.create_engine(f"mysql+pymysql://{MySQL_User}:{MySQL_Pass}@{MySQL_Host}/{db_name}", echo=True)
+    
+    table_list = ["pokemon_species", "pokemon", "ability", "pokemon_ability", "pokemon_form", "type", "pokemon_types"]
+    table_count = 0
+
+    with engine.connect() as connection:
+        query_list = [
+                        """
+                        CREATE TABLE pokemon_species (
+                            id INT PRIMARY KEY,
+                            name VARCHAR(100),
+                            base_happiness INT,
+                            capture_rate INT,
+                            gender_rate INT,
+                            hatch_counter INT,
+                            is_baby BOOLEAN,
+                            is_legendary BOOLEAN,
+                            is_mythical BOOLEAN,
+                            evolves_from_species_id INT,
+                            growth_rate_name VARCHAR(50),
+                            habitat_name VARCHAR(50),
+                            generation_name VARCHAR(50),
+                            shape_name VARCHAR(50),
+                            color_name VARCHAR(50),
+                            FOREIGN KEY (evolves_from_species) REFERENCES pokemon_species(id)
+                        )
+                        """,
+                        
+                        """
+                        CREATE TABLE pokemon (
+                            id INT PRIMARY KEY,
+                            name VARCHAR(100),
+                            base_experience INT,
+                            height INT,
+                            weight INT,
+                            is_default BOOLEAN,
+                            `order` INT,
+                            species_id INT,
+                            FOREIGN KEY (species_id) REFERENCES pokemon_species(id)
+                        )
+                        """,
+
+                        """
+                        CREATE TABLE ability (
+                            id INT PRIMARY KEY,
+                            name VARCHAR(100),
+                            generation_name VARCHAR(50),
+                            is_main_series BOOLEAN
+                        )
+                        """,
+
+                        """
+                        CREATE TABLE pokemon_ability (
+                            pokemon_id INT,
+                            ability_id INT,
+                            is_hidden BOOLEAN,
+                            slot INT,
+                            PRIMARY KEY (pokemon_id, ability_id),
+                            FOREIGN KEY (pokemon_id) REFERENCES pokemon(id),
+                            FOREIGN KEY (ability_id) REFERENCES ability(id)
+                        )
+                        """,
+
+                        """
+                        CREATE TABLE pokemon_form (
+                            id INT PRIMARY KEY,
+                            pokemon_id INT,
+                            name VARCHAR(100),
+                            form_name VARCHAR(100),
+                            form_order INT,
+                            is_default BOOLEAN,
+                            is_mega BOOLEAN,
+                            is_battle_only BOOLEAN,
+                            version_group_name VARCHAR(50),
+                            FOREIGN KEY (pokemon_id) REFERENCES pokemon(id)
+                        )
+                        """,
+
+                        """
+                        CREATE TABLE type (
+                            id INT PRIMARY KEY,
+                            name VARCHAR(50),
+                            generation VARCHAR(50)
+                        )
+                        """,
+
+                        """
+                        CREATE TABLE pokemon_types (
+                            pokemon_id INT,
+                            type_id INT,
+                            slot INT,
+                            PRIMARY KEY (pokemon_id, type_id),
+                            FOREIGN KEY (pokemon_id) REFERENCES pokemon(id),
+                            FOREIGN KEY (type_id) REFERENCES type(id)
+                        )
+                        """ ]
+        
+        for table_name, query in zip(table_list, query_list):
+            try:
+                connection.execute(sal.text(query))
+            except Exception as err:
+                print(f"Error creating table '{table_name}': {err}")
+            else:
+                print(f"Successfully created table '{table_name}'")
+
+        
+        # Verifying table creation
+        query = "SHOW TABLES ;"
+        result = connection.execute(sal.text(query))
+
+        db_table_list = []
+
+        for table_name in result:
+            db_table_list.append(table_name[0])
+        
+        for table in table_list:
+            if table in db_table_list:
+                print(f"Table {table} created successfully!!!")
+            else:
+                print(f"Table {table} is not created due to any error.")
+                exit(0)
+        
+        print("\n___All the tables are created successfully___")  
+# ---------------------------------------------------------------------------------------------
+
+
+def schema_design(database_name):
+    creating_database(database_name)
+    print("\n")
+    print("--" * 40)
+    creating_tables(database_name)
+    print("\n")
+    print("--" * 40)
+
+def loading_data(db_name):
+    files_list = ["pokemon_species", "pokemon", "ability", "pokemon_ability", "pokemon_form", "type", "pokemon_types"]
+
+    table_list = ["pokemon_species", "pokemon", "ability", "pokemon_ability", "pokemon_form", "type", "pokemon_types"]
+
+    # Appending "cleaned_json/" in file names
+    for i in range(len(files_list)):
+        files_list[i] = f"cleaned_json/{files_list[i]}_cleaned.json"
+    
+    # Loading jsons into df
+    pokemon_species_df = pd.read_json(files_list[0])
+    pokemon_df = pd.read_json(files_list[1])
+    ability_df = pd.read_json(files_list[2])
+    pokemon_ability_df = pd.read_json(files_list[3])
+    pokemon_form_df = pd.read_json(files_list[4])
+    type_df = pd.read_json(files_list[5])
+    pokemon_types_df = pd.read_json(files_list[6])
+
+    # Establishing connection to database
+    MySQL_User = os.getenv("MySQL_User")
+    MySQL_Pass = os.getenv("MySQL_Pass")
+    MySQL_Host = os.getenv("MySQL_Host")
+    print("Connecting to Mysql")
+
+    engine = sal.create_engine(f"mysql+pymysql://{MySQL_User}:{MySQL_Pass}@{MySQL_Host}/{db_name}", echo=True)
+
+    with engine.connect() as connection:
+        pokemon_species_df.to_sql(table_list[0], connection, if_exists="append", index=False)
+        # pokemon_df.to_sql(table_list[1], connection, if_exists="append", index=False)
+        # ability_df.to_sql(table_list[2], connection, if_exists="append", index=False)
+        # pokemon_ability_df.to_Sql(table_list[3], if_exists="append", index=False)
+        # pokemon_form_df.to_sql(table_list[4], if_exists="append", index=False)
+        # type_df.to_sql(table_list[5], if_exists="append", index=False)
+        # pokemon_types_df.to_sql(table_list[6], if_exists="append", index=False)
+
+        # Verification
+        for table in table_list:
+            query = f"SELECT * FROM {table} LIMIT 10;"
+            result = connection.execute(sal.text(query))
+            first_row = result.fetchone() # Fetching the first row
+            
+            if first_row is None:
+                print(f"{table} is empty!!!")
+            else:
+                print(f"{table} loaded successfully!!!")
+
+        print("\n\nData Loading successful!!!")
+
 # ==========================================================================================
+
+def load():
+    database_name = "PokeAPI_5"
+    schema_design(database_name)
+    loading_data(database_name)
+
 def transform():
     # Function to clean the data
     data_cleaning()
@@ -472,6 +695,6 @@ def extraction():
     print("\n*****Extraction completed successfully!!!*****\n")
     print("==" * 40)
 
-extraction()
-
-transform()
+# extraction()
+# transform()
+load()

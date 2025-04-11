@@ -23,7 +23,7 @@ def extraction_1(endpoint):
 
         raw_json = []
 
-        for i in range(1, total_count // 50):
+        for i in range(1, total_count // 5):
             if i == 1:
                 response = requests.get(f"https://pokeapi.co/api/v2/{endpoint}/{int(i)}")
                 response.raise_for_status()
@@ -53,6 +53,7 @@ def extraction_1(endpoint):
         print(f"Other error occurred: {err}")
 
     print(f"Extraction of {endpoint} completed successfully")
+    print("\n")
 
 # --------------------------------------------------------------------------------------------------------
 
@@ -60,7 +61,7 @@ def extraction_1(endpoint):
 def cleaning_pokemon_data():    
     # loading raw json
     endpoint = "pokemon"
-    print("!!!Cleaning {endpoint} data...")
+    print(f"!!!Cleaning {endpoint} data...")
 
     updated_endpoint = endpoint.replace("-", "_")
     file_name = f"raw_json/{updated_endpoint}_raw.json"
@@ -103,7 +104,7 @@ def cleaning_pokemon_data():
 def cleaning_pokemon_species_data():
     # loading raw json
     endpoint = "pokemon-species"
-    print("!!!Cleaning {endpoint} data...")
+    print(f"!!!Cleaning {endpoint} data...")
     updated_endpoint = endpoint.replace("-", "_")
     file_name = f"raw_json/{updated_endpoint}_raw.json"
     
@@ -152,7 +153,7 @@ def cleaning_pokemon_species_data():
 def cleaning_ability_data():
     # loading raw json
     endpoint = "ability"
-    print("!!!Cleaning {endpoint} data...")
+    print(f"!!!Cleaning {endpoint} data...")
 
     updated_endpoint = endpoint.replace("-", "_")
     file_name = f"raw_json/{updated_endpoint}_raw.json"
@@ -190,7 +191,7 @@ def cleaning_ability_data():
 def cleaning_pokemon_form_data():
     # loading raw json
     endpoint = "pokemon-form"
-    print("!!!Cleaning {endpoint} data...")
+    print(f"!!!Cleaning {endpoint} data...")
 
     updated_endpoint = endpoint.replace("-", "_")
     file_name = f"raw_json/{updated_endpoint}_raw.json"
@@ -229,14 +230,11 @@ def cleaning_pokemon_form_data():
             cleaned_file_name_md = f"cleaned_json/{updated_endpoint}_cleaned_schema.md"
             helper.json_describe_to_md(data[0], cleaned_file_name_md)
         
-        # Logging
-        print("!!! Pokemon Data is cleaned successfully")
-
 # ---------------------------------------------------------------------------------------------
 def cleaning_type_data():
     # loading raw json
     endpoint = "type"
-    print("!!!Cleaning {endpoint} data...")
+    print(f"!!!Cleaning {endpoint} data...")
 
     updated_endpoint = endpoint.replace("-", "_")
     file_name = f"raw_json/{updated_endpoint}_raw.json"
@@ -272,7 +270,7 @@ def cleaning_type_data():
 # ------------------------------------------------------------------------------------------
 
 def creating_ids(name_file, id_file, name_col, id_col):
-    print(f"Converting names to ids for {name_file} : {name_col}")
+    print(f"\nConverting names to ids for {name_file} : {name_col}")
     with open(name_file, "r") as file:
         df1 = pd.read_json(file)
 
@@ -377,7 +375,7 @@ def creating_pokemon_type_table():
 
 # ----------------------------------------------------------------------------------------
 def count_missing_values(file_name):
-    print(f"Counting missing values for {file_name}")
+    print(f"\nCounting missing values for {file_name}")
 
     df = pd.read_json(f"cleaned_json/{file_name}_cleaned.json")
     column_names = df.columns
@@ -400,16 +398,22 @@ def count_missing_values(file_name):
 # ----------------------------------------------------------------------------------------
 def create_extra_tables():
     creating_pokemon_ability_table()
+    print("\n")
     creating_pokemon_type_table()
+    print("\n")
 
 # -----------------------------------------------------------------------------------------------------
 def data_cleaning():
     cleaning_pokemon_data()
+    print("\n")
     cleaning_pokemon_species_data()
+    print("\n")
     cleaning_ability_data()
+    print("\n")
     cleaning_pokemon_form_data()
+    print("\n")
     cleaning_type_data()
-    pass
+    print("\n")
 
 # ------------------------------------------------------------------------------------------
 
@@ -424,38 +428,39 @@ def transform():
     # Function to clean the data
     data_cleaning()
     
-    print("Data cleaning is successful!!")
-    print("--" * 20)
+    print("_____Data cleaning is successful!!_____\n")
+    print("--" * 40)
 
     # Function to create ids from names
     creating_ids("cleaned_json/pokemon_cleaned.json", "cleaned_json/pokemon_species_cleaned.json", "species_name", "id")
     creating_ids("cleaned_json/pokemon_species_cleaned.json", "cleaned_json/pokemon_species_cleaned.json", "evolves_from_species_name", "id")
     creating_ids("cleaned_json/pokemon_form_cleaned.json", "cleaned_json/pokemon_cleaned.json", "pokemon_name", "id")
     
-    print("Name to Id conversion is successful!!")
-    print("--" * 20)
+    print("_____Name to Id conversion is successful!!_____\n")
+    print("--" * 40)
     
     # # Function to create extra jsons for database according to schema
     create_extra_tables()
     
-    print("Extra table creation is successful!!!")
-    print("--" * 20)
+    print("_____Extra table creation is successful!!!_____\n")
+    print("--" * 40)
 
     # # Function to create ids from names 
     creating_ids("cleaned_json/pokemon_ability_cleaned.json", "cleaned_json/ability_cleaned.json", "ability_name", "id")
     creating_ids("cleaned_json/pokemon_types_cleaned.json", "cleaned_json/type_cleaned.json", "type_name", "id")
 
-    print("Name to Id conversion for new tables is successful!!")
-    print("--" * 20)
+    print("\n______Name to Id conversion for new tables is successful!!_____\n")
+    print("--" * 40)
 
     # Detecting missing values 
     detecting_missing_values()
     
-    print("Detection of missing values is done successfully!!")
-    print("--" * 20)
+    print("\n_____Detection of missing values is done successfully!!_____\n")
+    print("--" * 40)
     print("\n\n")
-    print("Data Transformation is completed successfully!!")
-    print("==" * 20)
+    print("*****Data Transformation is completed successfully!!*****\n")
+    print("==" * 40)
+    print("\n")
     
 # ------------------------------------------------------------------------------------------------
 def extraction():
@@ -463,9 +468,9 @@ def extraction():
     endpointList = ["pokemon", "pokemon-species", "ability", "pokemon-form", "type"]
     for endpoint in endpointList:
         extraction_1(endpoint)
-        print("--" * 20)
-    print("Extraction completed successfully!!!")
-    print("==" * 20)
+        print("--" * 40)
+    print("\n*****Extraction completed successfully!!!*****\n")
+    print("==" * 40)
 
 extraction()
 

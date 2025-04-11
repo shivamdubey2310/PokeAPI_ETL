@@ -13,7 +13,7 @@
 | 10 | moves | <class 'list'> | <class 'dict'> | move | <class 'dict'> | name | <class 'str'> | N/A |
 | 11 | name | <class 'str'> |  |  |  |  |  |  |
 | 12 | order | <class 'int'> |  |  |  |  |  |  |
-| 13 | past_abilities | <class 'list'> | Empty List/Tuple | N/A | N/A | N/A | N/A | N/A |
+| 13 | past_abilities | <class 'list'> | <class 'dict'> | abilities | <class 'list'> |  | <class 'dict'> | ListItem |
 | 14 | past_types | <class 'list'> | Empty List/Tuple | N/A | N/A | N/A | N/A | N/A |
 | 15 | species | <class 'dict'> |  |  |  |  |  |  |
 | 16 | sprites | <class 'dict'> |  |  |  |  |  |  |

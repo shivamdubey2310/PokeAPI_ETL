@@ -1,8 +1,5 @@
-# pokemon https://pokeapi.co/api/v2/pokemon/{id or name}/ 
-# Pokemon species https://pokeapi.co/api/v2/pokemon-species/{id or name}/
-# ability https://pokeapi.co/api/v2/ability/{id or name}/
-# pokemon forms https://pokeapi.co/api/v2/pokemon-form/{id or name}/
-# pokemon type https://pokeapi.co/api/v2/type/{id or name}/
+# Astro CLI is not used... Airflow is used directly.
+# Extraction is done for a small data.
 
 import requests
 import json
@@ -649,7 +646,7 @@ def loading_data(db_name):
 # ==========================================================================================
 
 def load():
-    database_name = "PokeAPI_16"
+    database_name = "PokeAPI_17"
     schema_design(database_name)
     loading_data(database_name)
 

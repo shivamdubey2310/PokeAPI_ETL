@@ -716,22 +716,16 @@ with DAG(
     
     task_1 = PythonOperator(
         task_id = "Extract",
-        description = "Extracting data from API",
-        tags = ["Extraction", "E"],
         python_callable = extraction
     )
 
     task_2 = PythonOperator(
         task_id = "Transform",
-        description = "Transforming data",
-        tags = ["Transform", "T"],
         python_callable = transform
     )
 
     task_3 = PythonOperator(
         task_id = "Load",
-        description = "Loading data to MySQL",
-        tags = ["Load", "L"],
         python_callable = load
     )
 

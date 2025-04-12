@@ -11,6 +11,9 @@ import sqlalchemy as sal
 import helperFunctions.json_explorer as helper
 import time
 import os
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime
 
 # To import all .env variables
 from dotenv import load_dotenv
@@ -699,6 +702,37 @@ def extraction():
     print("\n*****Extraction completed successfully!!!*****\n")
     print("==" * 40)
 
-# extraction()
-transform()
-load()
+# ========================================================================================================
+# Airflow part
+
+with DAG(
+    dag_id = "PokeAPI_ETL",
+    description = "ETL from API to MySQL",
+    tags = ["ETL", "MySQL", "API"],
+    start_date = datetime(2025, 1, 1),
+    schedule_interval = "@daily",
+    catchup = False
+) as dag:
+    
+    task_1 = PythonOperator(
+        task_id = "Extract",
+        description = "Extracting data from API",
+        tags = ["Extraction", "E"],
+        python_callable = extraction
+    )
+
+    task_2 = PythonOperator(
+        task_id = "Transform",
+        description = "Transforming data",
+        tags = ["Transform", "T"],
+        python_callable = transform
+    )
+
+    task_3 = PythonOperator(
+        task_id = "Load",
+        description = "Loading data to MySQL",
+        tags = ["Load", "L"],
+        python_callable = load
+    )
+
+    task_1 >> task_2 >> task_3

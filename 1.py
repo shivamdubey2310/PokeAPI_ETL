@@ -29,7 +29,7 @@ def extraction_1(endpoint):
 
         raw_json = []
 
-        for i in range(1, total_count // 5):
+        for i in range(1, total_count // 50):
             if i == 1:
                 response = requests.get(f"https://pokeapi.co/api/v2/{endpoint}/{int(i)}")
                 response.raise_for_status()
@@ -214,7 +214,7 @@ def cleaning_pokemon_form_data():
                 "id": raw_json[i]["id"],
                 "pokemon_name": raw_json[i]["pokemon"]["name"] if raw_json[i]["pokemon"] else None, # Needs further transformation
                 "name": raw_json[i]["name"],
-                "form_name": raw_json[i]["form_name"],
+                "form_name": raw_json[i]["name"],
                 "form_order": raw_json[i]["form_order"],
                 "is_default": raw_json[i]["is_default"],
                 "is_mega": raw_json[i]["is_mega"],
@@ -646,7 +646,7 @@ def loading_data(db_name):
 # ==========================================================================================
 
 def load():
-    database_name = "PokeAPI_14"
+    database_name = "PokeAPI_16"
     schema_design(database_name)
     loading_data(database_name)
 
@@ -692,9 +692,10 @@ def transform():
 def extraction():
     print("\n!!!Extracting data!!!\n")
     endpointList = ["pokemon", "pokemon-species", "ability", "pokemon-form", "type"]
-    for endpoint in endpointList:
-        extraction_1(endpoint)
-        print("--" * 40)
+    # for endpoint in endpointList:
+    #     extraction_1(endpoint)
+    #     print("--" * 40)
+    extraction_1(endpointList[-2])
     print("\n*****Extraction completed successfully!!!*****\n")
     print("==" * 40)
 

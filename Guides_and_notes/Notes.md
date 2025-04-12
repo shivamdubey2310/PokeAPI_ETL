@@ -21,3 +21,9 @@ json-explorer json_file_name.json
 
 ----
 
+### Remove foreign key checks before loading data in RDBMS by adding this line
+```python
+connection.execute(sal.text("SET FOREIGN_KEY_CHECKS = 0;"))
+# and also turn them on by
+connection.execute(sal.text("SET FOREIGN_KEY_CHECKS = 1;"))
+```

@@ -482,7 +482,7 @@ def creating_tables(db_name):
                             generation_name VARCHAR(50),
                             shape_name VARCHAR(50),
                             color_name VARCHAR(50),
-                            FOREIGN KEY (evolves_from_species) REFERENCES pokemon_species(id)
+                            FOREIGN KEY (evolves_from_species_id) REFERENCES pokemon_species(id)
                         )
                         """,
                         
@@ -609,6 +609,7 @@ def loading_data(db_name):
     pokemon_form_df = pd.read_json(files_list[4])
     type_df = pd.read_json(files_list[5])
     pokemon_types_df = pd.read_json(files_list[6])
+    
 
     # Establishing connection to database
     MySQL_User = os.getenv("MySQL_User")
@@ -618,14 +619,16 @@ def loading_data(db_name):
 
     engine = sal.create_engine(f"mysql+pymysql://{MySQL_User}:{MySQL_Pass}@{MySQL_Host}/{db_name}", echo=True)
 
-    with engine.connect() as connection:
+    with engine.begin() as connection:
+        connection.execute(sal.text("SET FOREIGN_KEY_CHECKS = 0;"))
         pokemon_species_df.to_sql(table_list[0], connection, if_exists="append", index=False)
-        # pokemon_df.to_sql(table_list[1], connection, if_exists="append", index=False)
-        # ability_df.to_sql(table_list[2], connection, if_exists="append", index=False)
-        # pokemon_ability_df.to_Sql(table_list[3], if_exists="append", index=False)
-        # pokemon_form_df.to_sql(table_list[4], if_exists="append", index=False)
-        # type_df.to_sql(table_list[5], if_exists="append", index=False)
-        # pokemon_types_df.to_sql(table_list[6], if_exists="append", index=False)
+        pokemon_df.to_sql(table_list[1], connection, if_exists="append", index=False)
+        ability_df.to_sql(table_list[2], connection, if_exists="append", index=False)
+        pokemon_ability_df.to_sql(table_list[3], connection, if_exists="append", index=False)
+        pokemon_form_df.to_sql(table_list[4], connection, if_exists="append", index=False)
+        type_df.to_sql(table_list[5], connection, if_exists="append", index=False)
+        pokemon_types_df.to_sql(table_list[6], connection, if_exists="append", index=False)
+        connection.execute(sal.text("SET FOREIGN_KEY_CHECKS = 0;"))
 
         # Verification
         for table in table_list:
@@ -643,7 +646,7 @@ def loading_data(db_name):
 # ==========================================================================================
 
 def load():
-    database_name = "PokeAPI_5"
+    database_name = "PokeAPI_14"
     schema_design(database_name)
     loading_data(database_name)
 
@@ -696,5 +699,5 @@ def extraction():
     print("==" * 40)
 
 # extraction()
-# transform()
+transform()
 load()
